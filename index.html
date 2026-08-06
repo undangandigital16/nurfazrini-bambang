@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undangan Pernikahan - Nur Fazrini & Ahmad Bambang Sutikno</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- AOS (Animate On Scroll) CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+
+    <style>
+        :root {
+            --primary-gold: #d4af37;
+            --light-gold: #f3e5ab;
+            --dark-gold: #996515;
+            --bg-emerald: #092019;
+            --card-emerald: #103328;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-emerald);
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        .font-serif-luxury {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        .font-script {
+            font-family: 'Alex Brush', cursive;
+        }
+
+        /* Gold Gradient Text */
+        .text-gold-gradient {
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Gold Border Gradient */
+        .border-gold-gradient {
+            border-image: linear-gradient(135deg, #bf953f, #fcf6ba, #aa771c) 1;
+        }
+
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(16, 51, 40, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-card-gold {
+            background: rgba(212, 175, 55, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+
+        /* Photo Frame Hover Glow */
+        .photo-frame {
+            position: relative;
+            transition: all 0.5s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+        .photo-frame:hover {
+            transform: scale(1.03) translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 30px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Envelope Cover Animation */
+        #coverPage {
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1s ease;
+        }
+        .cover-opened {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Envelope Wax Seal Pulse */
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            50% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+        }
+        .seal-pulse {
+            animation: pulse-gold 2s infinite;
+        }
+
+        /* Floating Floating Leaves/Particles */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+        .floating-anim {
+            animation: floatSlow 6s ease-in-out infinite;
+        }
+
+        /* Rotate Vinyl Music Disk */
+        @keyframes spinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .spin-slow {
+            animation: spinSlow 8s linear infinite;
+        }
+
+        /* Canvas Particle overlay for stars */
+        #starCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 60;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen selection:bg-yellow-600 selection:text-white">
+
+    <!-- Audio Element -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="lagu.mp3" type="audio/mpeg">
+        Browser Anda tidak mendukung elemen audio.
+    </audio>
+
+    <!-- Canvas Animation Bintang Sparkle -->
+    <canvas id="starCanvas"></canvas>
+
+    <!-- COVER PAGE OVERLAY -->
+    <div id="coverPage" class="fixed inset-0 z-50 flex items-center justify-center bg-[#061712] px-4 py-8 overflow-y-auto">
+        <!-- Floating Ambient Glow Background -->
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-900/20 via-emerald-950/80 to-[#040f0c] pointer-events-none"></div>
+        
+        <!-- Luxury Floral Ornaments SVG Background Layer -->
+        <div class="absolute top-4 left-4 w-28 md:w-48 opacity-40 pointer-events-none">
+            <svg viewBox="0 0 100 100" fill="none" stroke="#d4af37" stroke-width="1.5"><path d="M0,0 Q50,0 50,50 Q0,50 0,0 M50,0 Q100,0 100,50 Q50,50 50,0 M0,50 Q50,50 50,100 Q0,100 0,50"></path></svg>
+        </div>
+        <div class="absolute bottom-4 right-4 w-28 md:w-48 opacity-40 pointer-events-none transform rotate-180">
+            <svg viewBox="0 0 100 100" fill="none" stroke="#d4af37" stroke-width="1.5"><path d="M0,0 Q50,0 50,50 Q0,50 0,0 M50,0 Q100,0 100,50 Q50,50 50,0 M0,50 Q50,50 50,100 Q0,100 0,50"></path></svg>
+        </div>
+
+        <!-- Inner Content Card -->
+        <div class="relative z-10 max-w-md w-full glass-card rounded-2xl p-6 md:p-8 text-center border border-amber-500/30 shadow-2xl flex flex-col items-center">
+            
+            <p class="font-cinzel text-xs md:text-sm tracking-[0.3em] text-amber-300 uppercase mb-2">The Wedding Of</p>
+            
+            <h1 class="font-script text-4xl sm:text-5xl md:text-6xl text-gold-gradient my-2 leading-tight drop-shadow">
+                Nur Fazrini <br><span class="text-2xl sm:text-3xl font-serif-luxury font-light text-amber-200/90">&</span><br> Ahmad Bambang
+            </h1>
+            <p class="font-cinzel text-xs tracking-[0.2em] text-amber-400 mb-6">16 AGUSTUS 2026</p>
+
+            <!-- Foto 1 Cover Placeholder & Frame -->
+            <div class="relative my-4 group">
+                <div class="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-200 to-amber-700 opacity-75 blur transition duration-1000 group-hover:opacity-100"></div>
+                <div class="relative w-48 h-64 md:w-56 md:h-72 rounded-xl overflow-hidden photo-frame border-2 border-amber-400/50">
+                    <img src="foto1.jpeg" id="coverPhoto" alt="Foto Cover Nur Fazrini & Ahmad Bambang" 
+                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x800/103328/d4af37?text=Foto+Cover+(foto1.jpeg)';" />
+                </div>
+            </div>
+
+            <!-- Kepada Yth Box -->
+            <div class="mt-4 w-full glass-card-gold rounded-xl p-4 text-center border border-amber-500/30">
+                <p class="text-xs uppercase tracking-widest text-amber-200/80 mb-1">Kepada Yth. Bapak/Ibu/Saudara/i:</p>
+                <div id="guestName" class="font-serif-luxury text-xl md:text-2xl font-semibold text-amber-100 min-h-[1.75rem] py-1">
+                    Tamu Undangan
+                </div>
+                <p class="text-[10px] text-amber-300/60 italic mt-1">*Mohon maaf bila ada kesalahan penulisan nama/gelar</p>
+            </div>
+
+            <!-- Buka Undangan Button shaped like a luxury letter envelope -->
+            <button onclick="openWeddingInvitation()" 
+                    class="mt-6 group relative inline-flex items-center justify-center px-8 py-3.5 overflow-hidden font-cinzel text-sm font-semibold tracking-wider text-amber-950 transition duration-300 ease-out bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 rounded-full shadow-lg hover:shadow-amber-500/40 seal-pulse hover:scale-105">
+                <span class="absolute inset-0 w-full h-full bg-white/30 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
+                <i class="fa-solid fa-envelope-open text-base mr-2 text-amber-900 group-hover:rotate-12 transition-transform duration-300"></i>
+                <span>BUKA UNDANGAN</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Audio Control Button -->
+    <button id="musicToggle" onclick="toggleMusic()" 
+            class="fixed bottom-6 right-6 z-40 hidden w-12 h-12 rounded-full glass-card border border-amber-400/50 text-amber-300 items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300">
+        <i id="musicIcon" class="fa-solid fa-compact-disc text-xl spin-slow text-amber-400"></i>
+    </button>
+
+    <!-- MAIN CONTENT INTI UNDANGAN -->
+    <main id="mainContent" class="relative z-10 max-w-4xl mx-auto px-4 py-8">
+
+        <!-- HEADER BANNER / HERO SECTION -->
+        <section class="min-h-screen flex flex-col justify-center items-center text-center py-16" data-aos="fade-up">
+            <div class="w-20 h-20 mb-4 opacity-80 floating-anim">
+                <svg viewBox="0 0 100 100" fill="none" stroke="#d4af37" stroke-width="1.5"><circle cx="50" cy="50" r="45"/><circle cx="50" cy="50" r="35"/></svg>
+            </div>
+            <p class="font-cinzel text-xs md:text-sm tracking-[0.4em] text-amber-400 mb-2 uppercase">Walimatul 'Ursy</p>
+            <h2 class="font-script text-5xl md:text-7xl text-gold-gradient my-4">Nur Fazrini <br><span class="text-3xl font-serif-luxury font-light text-amber-200">&</span><br> Ahmad Bambang Sutikno</h2>
+            <p class="font-serif-luxury text-lg md:text-xl text-amber-100 italic">Minggu, 16 Agustus 2026</p>
+            
+            <div class="mt-8 animate-bounce text-amber-400/60">
+                <i class="fa-solid fa-chevron-down text-xl"></i>
+            </div>
+        </section>
+
+        <!-- AYAT & HADIS SECTION -->
+        <section class="py-12 px-4" data-aos="fade-up">
+            <div class="glass-card rounded-2xl p-6 md:p-10 text-center relative overflow-hidden border border-amber-500/20">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+                
+                <!-- Arabic Calligraphy Header -->
+                <p class="font-serif-luxury text-2xl md:text-3xl text-amber-300 mb-4 leading-relaxed">
+                    بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+                </p>
+
+                <!-- Hadith Quote -->
+                <p class="font-serif-luxury text-base md:text-lg text-amber-100/90 italic max-w-2xl mx-auto leading-relaxed mb-6">
+                    "Dan di antara tanda-tanda (kebesaran-Nya) ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang."
+                </p>
+                <p class="font-cinzel text-xs text-amber-400 tracking-widest font-semibold uppercase mb-8">(QS. Ar-Rum: 21)</p>
+
+                <!-- Custom Intro Text as requested -->
+                <div class="w-16 h-[1px] bg-amber-400/40 mx-auto my-6"></div>
+                <p class="font-serif-luxury text-base md:text-xl text-amber-100 leading-relaxed max-w-3xl mx-auto">
+                    "Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara pernikahan putra-putri kami:"
+                </p>
+            </div>
+        </section>
+
+        <!-- MEMPELAI / BRIDE & GROOM SECTION -->
+        <section class="py-12" id="mempelai">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h3 class="font-cinzel text-2xl md:text-3xl text-gold-gradient tracking-widest uppercase">Pasangan Mempelai</h3>
+                <div class="w-24 h-0.5 bg-amber-400/50 mx-auto mt-2"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+                
+                <!-- MEMPELAI WANITA (NUR FAZRINI) -->
+                <div class="glass-card rounded-2xl p-6 md:p-8 text-center flex flex-col items-center" data-aos="fade-right">
+                    <div class="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden photo-frame border-4 border-amber-400/60 mb-6 shadow-xl">
+                        <img src="foto2.jpeg" alt="Nur Fazrini" class="w-full h-full object-cover" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/400x400/103328/d4af37?text=Nur+Fazrini+(foto2.jpeg)';" />
+                    </div>
+                    <h4 class="font-script text-4xl text-amber-300 mb-2">Nur Fazrini</h4>
+                    <p class="text-xs uppercase tracking-widest text-amber-400/80 mb-4 font-semibold">Mempelai Wanita</p>
+                    <div class="w-12 h-[1px] bg-amber-400/30 my-2"></div>
+                    <p class="text-sm text-amber-100/90 leading-relaxed">
+                        Putri Tercinta dari:<br>
+                        <strong class="font-serif-luxury text-lg text-amber-200">Bpk. Aripin</strong><br>&<br><strong class="font-serif-luxury text-lg text-amber-200">Ibu Risnawati</strong>
+                    </p>
+                </div>
+
+                <!-- MEMPELAI PRIA (AHMAD BAMBANG SUTIKNO) -->
+                <div class="glass-card rounded-2xl p-6 md:p-8 text-center flex flex-col items-center" data-aos="fade-left">
+                    <div class="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden photo-frame border-4 border-amber-400/60 mb-6 shadow-xl">
+                        <img src="foto3.jpeg" alt="Ahmad Bambang Sutikno" class="w-full h-full object-cover" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/400x400/103328/d4af37?text=Ahmad+Bambang+(foto3.jpeg)';" />
+                    </div>
+                    <h4 class="font-script text-4xl text-amber-300 mb-2">Ahmad Bambang Sutikno</h4>
+                    <p class="text-xs uppercase tracking-widest text-amber-400/80 mb-4 font-semibold">Mempelai Pria</p>
+                    <div class="w-12 h-[1px] bg-amber-400/30 my-2"></div>
+                    <p class="text-sm text-amber-100/90 leading-relaxed">
+                        Putra Tercinta dari:<br>
+                        <strong class="font-serif-luxury text-lg text-amber-200">Bpk. Hardenan (Alm)</strong><br>&<br><strong class="font-serif-luxury text-lg text-amber-200">Ibu Marhamah</strong>
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- COUNTDOWN TIMER SECTION -->
+        <section class="py-12" data-aos="zoom-in">
+            <div class="glass-card rounded-2xl p-6 md:p-8 text-center border border-amber-500/30 shadow-2xl">
+                <h3 class="font-cinzel text-xl md:text-2xl text-gold-gradient uppercase tracking-widest mb-2">Menghitung Hari</h3>
+                <p class="text-xs text-amber-200/70 mb-6">Menuju Hari Bahagia Nur Fazrini & Ahmad Bambang</p>
+
+                <div class="grid grid-cols-4 gap-2 sm:gap-4 max-w-lg mx-auto">
+                    <div class="glass-card-gold rounded-xl p-3 sm:p-4 text-center">
+                        <span id="cdDays" class="font-cinzel text-2xl sm:text-4xl font-bold text-amber-300 block">00</span>
+                        <span class="text-[10px] sm:text-xs text-amber-200/80 uppercase">Hari</span>
+                    </div>
+                    <div class="glass-card-gold rounded-xl p-3 sm:p-4 text-center">
+                        <span id="cdHours" class="font-cinzel text-2xl sm:text-4xl font-bold text-amber-300 block">00</span>
+                        <span class="text-[10px] sm:text-xs text-amber-200/80 uppercase">Jam</span>
+                    </div>
+                    <div class="glass-card-gold rounded-xl p-3 sm:p-4 text-center">
+                        <span id="cdMinutes" class="font-cinzel text-2xl sm:text-4xl font-bold text-amber-300 block">00</span>
+                        <span class="text-[10px] sm:text-xs text-amber-200/80 uppercase">Menit</span>
+                    </div>
+                    <div class="glass-card-gold rounded-xl p-3 sm:p-4 text-center">
+                        <span id="cdSeconds" class="font-cinzel text-2xl sm:text-4xl font-bold text-amber-300 block">00</span>
+                        <span class="text-[10px] sm:text-xs text-amber-200/80 uppercase">Detik</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RANGKAIAN ACARA (AKAD & RESEPSI) -->
+        <section class="py-12" id="acara">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h3 class="font-cinzel text-2xl md:text-3xl text-gold-gradient tracking-widest uppercase">Acara Pernikahan</h3>
+                <div class="w-24 h-0.5 bg-amber-400/50 mx-auto mt-2"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- AKAD NIKAH -->
+                <div class="glass-card rounded-2xl p-6 md:p-8 text-center border border-amber-500/30" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-amber-400/10 flex items-center justify-center text-amber-300 text-xl mb-4 border border-amber-400/30">
+                        <i class="fa-solid fa-hands-praying"></i>
+                    </div>
+                    <h4 class="font-cinzel text-xl text-amber-300 font-semibold mb-2">AKAD NIKAH</h4>
+                    <p class="font-serif-luxury text-lg text-amber-100 mb-1">Minggu, 16 Agustus 2026</p>
+                    <p class="text-sm text-amber-200/80"><i class="fa-regular fa-clock mr-1"></i> 07.00 WIB - Selesai</p>
+                </div>
+
+                <!-- RESEPSI -->
+                <div class="glass-card rounded-2xl p-6 md:p-8 text-center border border-amber-500/30" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-amber-400/10 flex items-center justify-center text-amber-300 text-xl mb-4 border border-amber-400/30">
+                        <i class="fa-solid fa-glass-water-droplet"></i>
+                    </div>
+                    <h4 class="font-cinzel text-xl text-amber-300 font-semibold mb-2">RESEPSI</h4>
+                    <p class="font-serif-luxury text-lg text-amber-100 mb-1">Minggu, 16 Agustus 2026</p>
+                    <p class="text-sm text-amber-200/80"><i class="fa-regular fa-clock mr-1"></i> 08.00 WIB - Selesai</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- LOKASI / GOOGLE MAP EMBED SECTION -->
+        <section class="py-12" id="lokasi" data-aos="fade-up">
+            <div class="glass-card rounded-2xl p-6 md:p-8 text-center border border-amber-500/30">
+                <div class="w-12 h-12 mx-auto rounded-full bg-amber-400/10 flex items-center justify-center text-amber-300 text-xl mb-4 border border-amber-400/30">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <h3 class="font-cinzel text-2xl text-gold-gradient uppercase tracking-widest mb-2">Lokasi Acara</h3>
+                <p class="text-sm text-amber-100/80 mb-6 max-w-lg mx-auto">MD PHOTOSUDIO dan sekitarnya. Silakan gunakan petunjuk peta di bawah ini untuk menuju lokasi acara.</p>
+
+                <!-- Map Frame Embed -->
+                <div class="w-full rounded-xl overflow-hidden border-2 border-amber-400/40 shadow-2xl relative bg-emerald-950/60 min-h-[350px]">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5553.480036030234!2d112.12362379999999!3d-2.4906573999999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e086eb9dfd04277%3A0xb4391f8d010ed413!2sMD%20PHOTOSUDIO!5e1!3m2!1sen!2sid!4v1786004657061!5m2!1sen!2sid" 
+                            width="100%" 
+                            height="380" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            referrerpolicy="no-referrer-when-downgrade"
+                            class="w-full min-h-[380px] block">
+                    </iframe>
+                </div>
+
+                <a href="https://maps.google.com/?q=MD+PHOTOSUDIO" target="_blank" rel="noopener noreferrer" 
+                   class="inline-flex items-center mt-6 px-6 py-3 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-cinzel text-xs font-bold tracking-wider hover:opacity-90 transition shadow-lg hover:shadow-amber-500/30">
+                    <i class="fa-solid fa-diamond-turn-right mr-2 text-base"></i> BUKA DI GOOGLE MAPS
+                </a>
+            </div>
+        </section>
+
+        <!-- GALERI FOTO (FOTO2.JPEG & FOTO3.JPEG) -->
+        <section class="py-12" id="galeri">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h3 class="font-cinzel text-2xl md:text-3xl text-gold-gradient tracking-widest uppercase">Galeri Momen</h3>
+                <p class="text-xs text-amber-200/70 mt-1">Nur Fazrini & Ahmad Bambang Sutikno</p>
+                <div class="w-24 h-0.5 bg-amber-400/50 mx-auto mt-2"></div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+                <!-- Foto 2 -->
+                <div class="group relative rounded-2xl overflow-hidden photo-frame border-2 border-amber-400/40" data-aos="zoom-in" data-aos-delay="100">
+                    <img src="foto2.jpeg" alt="Galeri Nur Fazrini & Ahmad Bambang 1" 
+                         class="w-full h-80 sm:h-96 object-cover transition-transform duration-700 group-hover:scale-110"
+                         onerror="this.onerror=null; this.src='https://placehold.co/800x1000/103328/d4af37?text=Galeri+Foto+2+(foto2.jpeg)';" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                        <p class="font-serif-luxury text-lg text-amber-200 italic">"Cinta adalah karunia terindah..."</p>
+                    </div>
+                </div>
+
+                <!-- Foto 3 -->
+                <div class="group relative rounded-2xl overflow-hidden photo-frame border-2 border-amber-400/40" data-aos="zoom-in" data-aos-delay="200">
+                    <img src="foto3.jpeg" alt="Galeri Nur Fazrini & Ahmad Bambang 2" 
+                         class="w-full h-80 sm:h-96 object-cover transition-transform duration-700 group-hover:scale-110"
+                         onerror="this.onerror=null; this.src='https://placehold.co/800x1000/103328/d4af37?text=Galeri+Foto+3+(foto3.jpeg)';" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                        <p class="font-serif-luxury text-lg text-amber-200 italic">"...Menuju Ridho-Nya Bersama"</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER & CLOSING -->
+        <footer class="py-16 text-center border-t border-amber-500/20 mt-12" data-aos="fade-up">
+            <p class="text-sm text-amber-100/80 mb-4 max-w-lg mx-auto px-4">
+                Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu kepada kedua mempelai.
+            </p>
+            <p class="font-serif-luxury text-base text-amber-300 italic mb-6">Wassalamu'alaikum Warahmatullahi Wabarakatuh</p>
+            
+            <h3 class="font-script text-4xl text-gold-gradient mb-2">Nur Fazrini & Ahmad Bambang</h3>
+            <p class="text-xs text-amber-300/80 font-cinzel tracking-[0.25em] uppercase mt-4">
+                Crafted with Elegance by <span class="font-bold text-amber-400 underline decoration-amber-500/50 underline-offset-4">MD Studio</span>
+            </p>
+        </footer>
+
+    </main>
+
+    <!-- AOS Library Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Parse Dynamic Guest Name from URL Query Parameter ?to=Nama
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const guestNameParam = urlParams.get('to') || urlParams.get('nama') || urlParams.get('n');
+            const guestNameElement = document.getElementById('guestName');
+            
+            if (guestNameParam) {
+                guestNameElement.innerText = decodeURIComponent(guestNameParam);
+            } else {
+                guestNameElement.innerText = "Tamu Undangan";
+            }
+        });
+
+        // Background Audio Controls
+        const bgMusic = document.getElementById('bgMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        const musicIcon = document.getElementById('musicIcon');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicIcon.classList.remove('spin-slow', 'fa-compact-disc');
+                musicIcon.classList.add('fa-play');
+                isPlaying = false;
+            } else {
+                bgMusic.play().then(() => {
+                    musicIcon.classList.add('spin-slow', 'fa-compact-disc');
+                    musicIcon.classList.remove('fa-play');
+                    isPlaying = true;
+                }).catch(err => console.log("Audio play blocked", err));
+            }
+        }
+
+        // Action when "Buka Undangan" button is clicked
+        function openWeddingInvitation() {
+            // Trigger star burst effect
+            createStarBurst();
+
+            // Slide Cover Up
+            const coverPage = document.getElementById('coverPage');
+            coverPage.classList.add('cover-opened');
+
+            // Show Music Floating Button
+            musicToggle.classList.remove('hidden');
+            musicToggle.classList.add('flex');
+
+            // Try to auto-play background music
+            bgMusic.play().then(() => {
+                isPlaying = true;
+            }).catch(() => {
+                isPlaying = false;
+                musicIcon.classList.remove('spin-slow', 'fa-compact-disc');
+                musicIcon.classList.add('fa-play');
+            });
+        }
+
+        // Canvas Star Sparkle FX
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Star {
+            constructor(x, y) {
+                this.x = x || Math.random() * canvas.width;
+                this.y = y || Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 3;
+                this.speedY = (Math.random() - 0.5) * 3 - 1;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.005;
+                this.color = `hsl(${Math.random() * 40 + 40}, 100%, 75%)`; // Golden glitter hues
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.alpha -= this.decay;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function createStarBurst() {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            for (let i = 0; i < 90; i++) {
+                stars.push(new Star(centerX, centerY));
+            }
+        }
+
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < stars.length; i++) {
+                stars[i].update();
+                stars[i].draw();
+                if (stars[i].alpha <= 0) {
+                    stars.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animateStars);
+        }
+        animateStars();
+
+        // Target Date: 16 August 2026 08:00:00
+        const targetDate = new Date("August 16, 2026 08:00:00").getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            if (difference > 0) {
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                document.getElementById('cdDays').innerText = days < 10 ? '0' + days : days;
+                document.getElementById('cdHours').innerText = hours < 10 ? '0' + hours : hours;
+                document.getElementById('cdMinutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+                document.getElementById('cdSeconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+            } else {
+                document.getElementById('cdDays').innerText = "00";
+                document.getElementById('cdHours').innerText = "00";
+                document.getElementById('cdMinutes').innerText = "00";
+                document.getElementById('cdSeconds').innerText = "00";
+            }
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
